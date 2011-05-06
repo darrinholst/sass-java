@@ -1,4 +1,4 @@
-package com.darrinholst.sass;
+package com.sass_lang;
 
 import org.jruby.embed.ScriptingContainer;
 
@@ -8,16 +8,28 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class SassCompiler implements Filter {
+public class SassCompilingFilter implements Filter {
+    protected static final String DEFAULT_TEMPLATE_LOCATION = "WEB-INF" + File.separator + "sass";
+    protected static final String DEFAULT_CSS_LOCATION = "stylesheets";
+    protected static final String DEFAULT_CACHE_LOCATION = "WEB-INF" + File.separator + ".sass-cache";
+
     private String templateLocation;
     private String cssLocation;
     private String cacheLocation;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         String root = new File(filterConfig.getServletContext().getRealPath("/")).getAbsolutePath();
-        templateLocation = root + File.separator + "WEB-INF/sass";
-        cssLocation = root + File.separator + "stylesheets";
-        cacheLocation = root + File.separator + "WEB-INF/.sass-cache";
+
+        templateLocation = fullPath(root, filterConfig.getInitParameter("templateLocation"), DEFAULT_TEMPLATE_LOCATION);
+        cssLocation = fullPath(root, filterConfig.getInitParameter("cssLocation"), DEFAULT_CSS_LOCATION);
+        cacheLocation = fullPath(root, filterConfig.getInitParameter("cacheLocation"), DEFAULT_CACHE_LOCATION);
+    }
+
+    private String fullPath(String root, String directory, String defaultDirectory) {
+        if(directory == null) {
+            directory = defaultDirectory;
+        }
+        return root + File.separator + directory;
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

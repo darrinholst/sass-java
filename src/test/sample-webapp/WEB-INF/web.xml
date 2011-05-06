@@ -8,7 +8,7 @@
 
     <filter>
         <filter-name>SassCompiler</filter-name>
-        <filter-class>com.darrinholst.sass.SassCompiler</filter-class>
+        <filter-class>com.sass_lang.SassCompilingFilter</filter-class>
     </filter>
 
     <filter-mapping>
