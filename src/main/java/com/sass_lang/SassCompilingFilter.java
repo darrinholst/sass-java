@@ -14,7 +14,7 @@ public class SassCompilingFilter implements Filter {
     protected static final String DEFAULT_CSS_LOCATION = "stylesheets";
     protected static final String DEFAULT_CACHE_LOCATION = "WEB-INF" + File.separator + ".sass-cache";
 
-    private String checkForUpdatesScript;
+    private String updateScript;
     private long lastRun;
 
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -23,7 +23,7 @@ public class SassCompilingFilter implements Filter {
         String cssLocation = fullPath(root, filterConfig.getInitParameter("cssLocation"), DEFAULT_CSS_LOCATION);
         String cacheLocation = fullPath(root, filterConfig.getInitParameter("cacheLocation"), DEFAULT_CACHE_LOCATION);
         
-        checkForUpdatesScript = checkForUpdatesScript(templateLocation, cssLocation, cacheLocation);
+        updateScript = buildUpdateScript(templateLocation, cssLocation, cacheLocation);
     }
 
     private String fullPath(String root, String directory, String defaultDirectory) {
@@ -36,13 +36,13 @@ public class SassCompilingFilter implements Filter {
         if (now - lastRun >= DWELL) {
             lastRun = now;
             ScriptingContainer ruby = new ScriptingContainer();
-            ruby.runScriptlet(checkForUpdatesScript);
+            ruby.runScriptlet(updateScript);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private String checkForUpdatesScript(String templateLocation, String cssLocation, String cacheLocation) {
+    private String buildUpdateScript(String templateLocation, String cssLocation, String cacheLocation) {
         StringWriter raw = new StringWriter();
         PrintWriter script = new PrintWriter(raw);
 
