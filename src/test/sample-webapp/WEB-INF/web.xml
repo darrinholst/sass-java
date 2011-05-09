@@ -9,6 +9,20 @@
     <filter>
         <filter-name>SassCompiler</filter-name>
         <filter-class>com.sass_lang.SassCompilingFilter</filter-class>
+        <!--
+        <init-param>
+            <param-name>templateLocation</param-name>
+            <param-value>some/other/location</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cssLocation</param-name>
+            <param-value>some/other/location</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cacheLocation</param-name>
+            <param-value>some/other/location</param-value>
+        </init-param>
+        -->
     </filter>
 
     <filter-mapping>

@@ -10,6 +10,9 @@ import java.io.StringWriter;
 
 public class SassCompilingFilter implements Filter {
     private static final int DWELL = 2000;
+    protected static final String TEMPLATE_LOCATION_PARAM = "templateLocation";
+    protected static final String CSS_LOCATION_PARAM = "cssLocation";
+    protected static final String CACHE_LOCATION_PARAM = "cacheLocation";
     protected static final String DEFAULT_TEMPLATE_LOCATION = "WEB-INF" + File.separator + "sass";
     protected static final String DEFAULT_CSS_LOCATION = "stylesheets";
     protected static final String DEFAULT_CACHE_LOCATION = "WEB-INF" + File.separator + ".sass-cache";
@@ -19,9 +22,9 @@ public class SassCompilingFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {
         String root = new File(filterConfig.getServletContext().getRealPath("/")).getAbsolutePath();
-        String templateLocation = fullPath(root, filterConfig.getInitParameter("templateLocation"), DEFAULT_TEMPLATE_LOCATION);
-        String cssLocation = fullPath(root, filterConfig.getInitParameter("cssLocation"), DEFAULT_CSS_LOCATION);
-        String cacheLocation = fullPath(root, filterConfig.getInitParameter("cacheLocation"), DEFAULT_CACHE_LOCATION);
+        String templateLocation = fullPath(root, filterConfig.getInitParameter(TEMPLATE_LOCATION_PARAM), DEFAULT_TEMPLATE_LOCATION);
+        String cssLocation = fullPath(root, filterConfig.getInitParameter(CSS_LOCATION_PARAM), DEFAULT_CSS_LOCATION);
+        String cacheLocation = fullPath(root, filterConfig.getInitParameter(CACHE_LOCATION_PARAM), DEFAULT_CACHE_LOCATION);
         
         updateScript = buildUpdateScript(templateLocation, cssLocation, cacheLocation);
     }
