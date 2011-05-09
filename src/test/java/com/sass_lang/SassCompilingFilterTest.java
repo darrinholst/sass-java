@@ -109,7 +109,7 @@ public class SassCompilingFilterTest {
     }
 
     @Test
-    public void doesNotRunIfLastRunWasLessThanFiveSecondsAgo() throws Exception {
+    public void doesNotRunIfLastRunWasLessThanTwoSecondsAgo() throws Exception {
         setupDefaultDirectories();
         addScssFileTo(fullPathOf(DEFAULT_TEMPLATE_LOCATION), "foo");
 
@@ -125,7 +125,7 @@ public class SassCompilingFilterTest {
     }
 
     @Test
-    public void runsIfLastRunWasGreaterThanFiveSecondsAgo() throws Exception {
+    public void runsIfLastRunWasGreaterThanTwoSecondsAgo() throws Exception {
         setupDefaultDirectories();
         addScssFileTo(fullPathOf(DEFAULT_TEMPLATE_LOCATION), "foo");
 
@@ -134,7 +134,7 @@ public class SassCompilingFilterTest {
         assertDirectoryNotEmpty(DEFAULT_CSS_LOCATION);
         clearDirectory(DEFAULT_CSS_LOCATION);
         assertDirectoryEmpty(DEFAULT_CSS_LOCATION);
-        clock.incrementSeconds(5);
+        clock.incrementSeconds(2);
 
         runFilter();
 

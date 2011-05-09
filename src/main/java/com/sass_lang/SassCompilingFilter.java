@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class SassCompilingFilter implements Filter {
-    private static final int DWELL = 5000;
+    private static final int DWELL = 2000;
     protected static final String DEFAULT_TEMPLATE_LOCATION = "WEB-INF" + File.separator + "sass";
     protected static final String DEFAULT_CSS_LOCATION = "stylesheets";
     protected static final String DEFAULT_CACHE_LOCATION = "WEB-INF" + File.separator + ".sass-cache";
