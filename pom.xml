@@ -15,7 +15,7 @@
             <url>http://darrinholst-maven.googlecode.com/svn/repo/</url>
         </repository>
     </repositories>
-    
+
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -46,4 +46,20 @@
             <version>3.1.1</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.10</version>
+                <configuration>
+                    <webAppSourceDirectory>${project.basedir}/src/test/sample-webapp</webAppSourceDirectory>
+                    <contextPath>sass-java</contextPath>
+                    <stopKey>foo</stopKey>
+                    <stopPort>9999</stopPort>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
