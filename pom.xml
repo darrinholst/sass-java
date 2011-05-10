@@ -6,7 +6,7 @@
 
     <groupId>com.sass-lang</groupId>
     <artifactId>sass-java</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <licenses>
@@ -18,11 +18,12 @@
 
     <scm>
         <url>https://github.com/darrinholst/sass-java</url>
+        <developerConnection>scm:git:git@github.com:darrinholst/sass-java.git</developerConnection>
     </scm>
 
     <repositories>
         <repository>
-            <id>darrinholst</id>
+            <id>darrinholst-maven</id>
             <url>http://darrinholst-maven.googlecode.com/svn/repo/</url>
         </repository>
     </repositories>
