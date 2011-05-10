@@ -1,7 +1,7 @@
 # Sass for Java
 
 Don't let those ruby devs have all the fun, with a simple filter you can
-have sass in you java too.
+have sass in your java too.
 
 ## Usage
 
