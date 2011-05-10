@@ -74,6 +74,12 @@
                     <contextPath>sass-java</contextPath>
                     <stopKey>foo</stopKey>
                     <stopPort>9999</stopPort>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>RUNTIME_ENVIRONMENT</name>
+                            <value>local</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,5 +1,6 @@
 package com.sass_lang;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,15 +14,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static com.sass_lang.SassCompilingFilter.*;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
-import static com.sass_lang.SassCompilingFilter.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SassCompilingFilterTest {
     private static final String SOME_OTHER_DIRECTORY = "someOtherDirectory";
+    private static final String ONLY_RUN_KEY = "unit_test_environment";
     @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Mock ServletRequest servletRequest;
@@ -42,6 +44,11 @@ public class SassCompilingFilterTest {
         when(servletContext.getRealPath("/")).thenReturn(webAppRoot);
 
         filter = new SassCompilingFilter();
+    }
+
+    @After
+    public void teardown() throws Exception {
+        System.clearProperty(ONLY_RUN_KEY);
     }
 
     @Test
@@ -143,7 +150,28 @@ public class SassCompilingFilterTest {
 
     @Test
     public void runsOnlyInDevelopmentMode() throws Exception {
-        //TODO: determine development mode
+        setupDefaultDirectories();
+        addScssFileTo(fullPathOf(DEFAULT_TEMPLATE_LOCATION), "foo");
+        when(filterConfig.getInitParameter(ONLY_RUN_KEY_PARAM)).thenReturn(ONLY_RUN_KEY);
+        when(filterConfig.getInitParameter(ONLY_RUN_VALUE_PARAM)).thenReturn("development");
+        System.setProperty(ONLY_RUN_KEY, "development");
+
+        initAndRunFilter();
+
+        assertDirectoryNotEmpty(DEFAULT_CSS_LOCATION);
+    }
+
+    @Test
+    public void doesNotRunInProductionMode() throws Exception {
+        setupDefaultDirectories();
+        addScssFileTo(fullPathOf(DEFAULT_TEMPLATE_LOCATION), "foo");
+        when(filterConfig.getInitParameter(ONLY_RUN_KEY_PARAM)).thenReturn(ONLY_RUN_KEY);
+        when(filterConfig.getInitParameter(ONLY_RUN_VALUE_PARAM)).thenReturn("development");
+        System.setProperty(ONLY_RUN_KEY, "production");
+
+        initAndRunFilter();
+
+        assertDirectoryEmpty(DEFAULT_CSS_LOCATION);
     }
 
     private void initAndRunFilter() throws ServletException, IOException {
@@ -185,7 +213,7 @@ public class SassCompilingFilterTest {
     private void clearDirectory(String directoryName) {
         List<String> filenames = directoryListing(directoryName);
 
-        for(String filename : filenames) {
+        for (String filename : filenames) {
             File file = new File(fullPathOf(directoryName), filename);
             assertTrue("trying to delete " + filename, file.delete());
         }
