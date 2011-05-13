@@ -87,3 +87,6 @@ compilation if that value is equal to local
 3. mvn jetty:run
 4. wait for maven to download the internet
 5. open http://localhost:8080/sass-java
+6. change src/test/sample-webapp/WEB-INF/sass/application.scss
+7. repeat step 5
+8. be amazed
