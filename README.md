@@ -82,7 +82,8 @@ environment variable called RUNTIME_ENVIRONMENT and only run the sass
 compilation if that value is equal to local
 
 ##Try it out
-1. git clone https://darrinholst@github.com/darrinholst/sass-java.git
+1. git clone https://github.com/darrinholst/sass-java.git
 2. cd sass-java
 3. mvn jetty:run
-4. open http://localhost:8080/sass-java
+4. wait for maven to download the internet
+5. open http://localhost:8080/sass-java
