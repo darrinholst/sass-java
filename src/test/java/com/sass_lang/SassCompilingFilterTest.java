@@ -1,5 +1,6 @@
 package com.sass_lang;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.*;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -174,6 +176,23 @@ public class SassCompilingFilterTest {
         assertDirectoryEmpty(DEFAULT_CSS_LOCATION);
     }
 
+    @Test
+    public void importWorks() throws Exception {
+        setupDefaultDirectories();
+        addScssFileTo(fullPathOf(DEFAULT_TEMPLATE_LOCATION), "_other", "body {color: #000}");
+        addScssFileTo(fullPathOf(DEFAULT_TEMPLATE_LOCATION), "base", "@import 'other';");
+
+        initAndRunFilter();
+
+        assertEquals(asList("base.css"), directoryListing(DEFAULT_CSS_LOCATION));
+        String expected = "body {" + System.getProperty("line.separator") + "  color: #000; }";
+        assertEquals(expected, contentsOf(fullPathOf(DEFAULT_CSS_LOCATION), "base.css").trim());
+    }
+
+    private String contentsOf(File directory, String filename) throws Exception {
+        return FileUtils.readFileToString(new File(directory, filename));
+    }
+
     private void initAndRunFilter() throws ServletException, IOException {
         filter.init(filterConfig);
         runFilter();
@@ -184,7 +203,15 @@ public class SassCompilingFilterTest {
     }
 
     private void addScssFileTo(File directory, String name) throws Exception {
-        assertTrue(new File(directory, name + ".scss").createNewFile());
+        addScssFileTo(directory, name, "");
+    }
+
+    private void addScssFileTo(File directory, String name, String content) throws Exception {
+        File file = new File(directory, name + ".scss");
+        assertTrue(file.createNewFile());
+        FileOutputStream output = new FileOutputStream(file);
+        output.write(content.getBytes());
+        output.close();
     }
 
     private void setupDefaultDirectories() throws Exception {
@@ -213,7 +240,7 @@ public class SassCompilingFilterTest {
     private void clearDirectory(String directoryName) {
         List<String> filenames = directoryListing(directoryName);
 
-        for (String filename : filenames) {
+        for(String filename : filenames) {
             File file = new File(fullPathOf(directoryName), filename);
             assertTrue("trying to delete " + filename, file.delete());
         }
