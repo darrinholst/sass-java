@@ -70,15 +70,15 @@ public class SassCompilingFilter implements Filter {
         StringWriter raw = new StringWriter();
         PrintWriter script = new PrintWriter(raw);
 
-        script.println("  require 'rubygems'                                                 ");
-        script.println("  require 'sass/plugin'                                              ");
-        script.println("  Sass::Plugin.options.merge!(                                       ");
-        script.println("    :template_location => '" + replaceSlashes(templateLocation) + "',");
-        script.println("    :css_location => '" + replaceSlashes(cssLocation) + "',          ");
-        script.println("    :cache_store => nil,                                             ");
-        script.println("    :cache_location => '" + replaceSlashes(cacheLocation) + "'       ");
-        script.println("  )                                                                  ");
-        script.println("  Sass::Plugin.check_for_updates                                     ");
+        script.println("  require 'rubygems'                                  ");
+        script.println("  require 'sass/plugin'                               ");
+        script.println("  Sass::Plugin.options.merge!(                        ");
+        script.println("    :template_location => '" + templateLocation + "', ");
+        script.println("    :css_location => '" + cssLocation + "',           ");
+        script.println("    :cache_store => nil,                              ");
+        script.println("    :cache_location => '" + cacheLocation + "'        ");
+        script.println("  )                                                   ");
+        script.println("  Sass::Plugin.check_for_updates                      ");
         script.flush();
 
         return raw.toString();
