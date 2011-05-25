@@ -1,6 +1,8 @@
 package com.sass_lang;
 
 import org.jruby.embed.ScriptingContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import java.io.File;
@@ -9,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class SassCompilingFilter implements Filter {
+    private static final Logger LOG = LoggerFactory.getLogger(SassCompilingFilter.class);
     private static final int DWELL = 2000;
     protected static final String ONLY_RUN_KEY_PARAM = "onlyRunWhenKey";
     protected static final String ONLY_RUN_VALUE_PARAM = "onlyRunWhenValue";
@@ -41,11 +44,21 @@ public class SassCompilingFilter implements Filter {
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         if(shouldRun()) {
-            lastRun = Clock.now().getTime();
-            new ScriptingContainer().runScriptlet(updateScript);
+            run();
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private void run() {
+        LOG.debug("compiling sass");
+        lastRun = Clock.now().getTime();
+
+        try {
+            new ScriptingContainer().runScriptlet(updateScript);
+        } catch(Exception e) {
+            LOG.warn("there was a problem compiling sass", e);
+        }
     }
 
     private boolean shouldRun() {
