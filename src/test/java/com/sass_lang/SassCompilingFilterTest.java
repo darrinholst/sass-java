@@ -15,11 +15,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import static com.sass_lang.SassCompilingFilter.*;
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,6 +43,7 @@ public class SassCompilingFilterTest {
         webAppRoot = temporaryFolder.newFolder("").getAbsolutePath();
         Clock.setDelegate(clock = new FakeClock());
         when(filterConfig.getServletContext()).thenReturn(servletContext);
+        when(filterConfig.getInitParameter(RETHROW_EXCEPTIONS_PARAM)).thenReturn("true");
         when(servletContext.getRealPath("/")).thenReturn(webAppRoot);
 
         filter = new SassCompilingFilter();
@@ -189,17 +190,66 @@ public class SassCompilingFilterTest {
         assertEquals(expected, contentsOf(fullPathOf(DEFAULT_CSS_LOCATION), "base.css").trim());
     }
 
+    @Test
+    public void multipleThreads() throws Exception {
+        setupDefaultDirectories();
+        initFilter();
+
+        CountDownLatch latch = new CountDownLatch(2);
+
+        FilterThread thread1 = new FilterThread(latch);
+        FilterThread thread2 = new FilterThread(latch);
+
+        thread1.start();
+        thread2.start();
+
+        thread1.join();
+        thread2.join();
+
+        assertFalse("exception thrown in 1st thread", thread1.exceptionThrown);
+        assertFalse("exception thrown in 2nd thread", thread2.exceptionThrown);
+    }
+
+    private class FilterThread extends Thread {
+        private CountDownLatch latch;
+        public boolean exceptionThrown;
+
+        public FilterThread(CountDownLatch countdown) {
+            this.latch = countdown;
+        }
+
+        @Override
+        public void run() {
+            try {
+                latch.countDown();
+                latch.await();
+                runFilter();
+            } catch(Exception e) {
+                exceptionThrown = true;
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     private String contentsOf(File directory, String filename) throws Exception {
         return FileUtils.readFileToString(new File(directory, filename));
     }
 
     private void initAndRunFilter() throws ServletException, IOException {
-        filter.init(filterConfig);
+        initFilter();
         runFilter();
     }
 
-    private void runFilter() throws ServletException, IOException {
-        filter.doFilter(servletRequest, servletResponse, filterChain);
+    private void initFilter() throws ServletException {
+        filter.init(filterConfig);
+    }
+
+    private void runFilter() {
+        try {
+            filter.doFilter(servletRequest, servletResponse, filterChain);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void addScssFileTo(File directory, String name) throws Exception {

@@ -13,6 +13,7 @@ import java.io.StringWriter;
 public class SassCompilingFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(SassCompilingFilter.class);
     private static final int DWELL = 2000;
+    protected static final String RETHROW_EXCEPTIONS_PARAM = "rethrowExceptions";
     protected static final String ONLY_RUN_KEY_PARAM = "onlyRunWhenKey";
     protected static final String ONLY_RUN_VALUE_PARAM = "onlyRunWhenValue";
     protected static final String TEMPLATE_LOCATION_PARAM = "templateLocation";
@@ -26,6 +27,7 @@ public class SassCompilingFilter implements Filter {
     private long lastRun;
     private String onlyRunWhenKey;
     private String onlyRunWhenValue;
+    private boolean rethrowExceptions;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         String root = new File(filterConfig.getServletContext().getRealPath("/")).getAbsolutePath();
@@ -34,6 +36,7 @@ public class SassCompilingFilter implements Filter {
         String cacheLocation = fullPath(root, filterConfig.getInitParameter(CACHE_LOCATION_PARAM), DEFAULT_CACHE_LOCATION);
         onlyRunWhenKey = filterConfig.getInitParameter(ONLY_RUN_KEY_PARAM);
         onlyRunWhenValue = filterConfig.getInitParameter(ONLY_RUN_VALUE_PARAM);
+        rethrowExceptions = Boolean.parseBoolean(filterConfig.getInitParameter(RETHROW_EXCEPTIONS_PARAM));
 
         updateScript = buildUpdateScript(templateLocation, cssLocation, cacheLocation);
     }
@@ -52,12 +55,15 @@ public class SassCompilingFilter implements Filter {
 
     private void run() {
         LOG.debug("compiling sass");
-        lastRun = Clock.now().getTime();
 
         try {
             new ScriptingContainer().runScriptlet(updateScript);
         } catch(Exception e) {
-            LOG.warn("there was a problem compiling sass", e);
+            LOG.warn("exception thrown while compiling sass", e);
+
+            if(rethrowExceptions) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -74,9 +80,16 @@ public class SassCompilingFilter implements Filter {
         return true;
     }
 
-    private boolean timeToRun() {
+    private synchronized boolean timeToRun() {
         long now = Clock.now().getTime();
-        return now - lastRun >= DWELL;
+        
+        if(now - lastRun >= DWELL) {
+            lastRun = Clock.now().getTime();
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     private String buildUpdateScript(String templateLocation, String cssLocation, String cacheLocation) {

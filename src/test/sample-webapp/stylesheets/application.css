@@ -1,2 +1,6 @@
 body {
-  background: #cccccc; }
+  background: #cccccc;
+  padding: 50px; }
+
+h1 {
+  font-size: 50px; }
