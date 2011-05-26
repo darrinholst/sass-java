@@ -36,13 +36,13 @@ pom.xml
         <dependency>
             <groupId>com.sass-lang</groupId>
             <artifactId>sass-java</artifactId>
-            <version>3.1.1.2</version>
+            <version>3.1.1.3</version>
         </dependency>
     </dependencies>
 
 **Ant**
 
-Download the [jar with depenencies](http://darrinholst-maven.googlecode.com/svn/repo/com/sass-lang/sass-java/3.1.1.2/sass-java-3.1.1.2-jar-with-dependencies.jar)
+Download the [jar with depenencies](http://darrinholst-maven.googlecode.com/svn/repo/com/sass-lang/sass-java/3.1.1.3/sass-java-3.1.1.3-jar-with-dependencies.jar)
 
 ##Config
 
