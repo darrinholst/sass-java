@@ -27,8 +27,8 @@ pom.xml
 
     <repositories>
         <repository>
-            <id>darrinholst-maven</id>
-            <url>http://darrinholst-maven.googlecode.com/svn/repo/</url>
+            <id>sass-java</id>
+            <url>http://sass-java.googlecode.com/svn/repo/</url>
         </repository>
     </repositories>
 
@@ -36,13 +36,13 @@ pom.xml
         <dependency>
             <groupId>com.sass-lang</groupId>
             <artifactId>sass-java</artifactId>
-            <version>3.1.1.3</version>
+            <version>3.1.1.4</version>
         </dependency>
     </dependencies>
 
 **Ant**
 
-Download the [jar with depenencies](http://darrinholst-maven.googlecode.com/svn/repo/com/sass-lang/sass-java/3.1.1.3/sass-java-3.1.1.3-jar-with-dependencies.jar)
+Download the [jar with depenencies](http://sass-java.googlecode.com/svn/repo/com/sass-lang/sass-java/3.1.1.3/sass-java-3.1.1.4-jar-with-dependencies.jar)
 
 ##Config
 
@@ -54,6 +54,7 @@ Configuration is done through filter init parameters
   compiled to (default stylesheets)
 * **cacheLocation** - the location that sass will use for compile
   caching (default WEB-INF/.sass-cache)
+* **cache** - turn caching on/off (default true)
 * **onlyRunWhenKey** - the system property or environment variable to
   check to see if sass compilation should run, use this to turn sass
   generation off in production
