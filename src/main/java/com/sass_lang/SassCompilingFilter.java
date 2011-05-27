@@ -24,29 +24,29 @@ public class SassCompilingFilter implements Filter {
     protected static final String DEFAULT_CSS_LOCATION = "stylesheets";
     protected static final String DEFAULT_CACHE_LOCATION = "WEB-INF" + File.separator + ".sass-cache";
 
+    private String rootWebPath;
     private String updateScript;
     private long lastRun;
     private String onlyRunWhenKey;
     private String onlyRunWhenValue;
     private boolean rethrowExceptions;
+    private String templateLocation;
+    private String cssLocation;
+    private String cacheLocation;
     private boolean cache;
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        String root = new File(filterConfig.getServletContext().getRealPath("/")).getAbsolutePath();
-        String templateLocation = fullPath(root, filterConfig.getInitParameter(TEMPLATE_LOCATION_PARAM), DEFAULT_TEMPLATE_LOCATION);
-        String cssLocation = fullPath(root, filterConfig.getInitParameter(CSS_LOCATION_PARAM), DEFAULT_CSS_LOCATION);
-        String cacheLocation = fullPath(root, filterConfig.getInitParameter(CACHE_LOCATION_PARAM), DEFAULT_CACHE_LOCATION);
-        onlyRunWhenKey = filterConfig.getInitParameter(ONLY_RUN_KEY_PARAM);
-        onlyRunWhenValue = filterConfig.getInitParameter(ONLY_RUN_VALUE_PARAM);
-        rethrowExceptions = Boolean.parseBoolean(filterConfig.getInitParameter(RETHROW_EXCEPTIONS_PARAM));
-        String cacheParameter = filterConfig.getInitParameter(CACHE_PARAM);
-        cache = cacheParameter == null ? true : Boolean.parseBoolean(cacheParameter);
+        rootWebPath = new File(filterConfig.getServletContext().getRealPath("/")).getAbsolutePath();
 
-        updateScript = buildUpdateScript(templateLocation, cssLocation, cacheLocation);
-    }
-
-    private String fullPath(String root, String directory, String defaultDirectory) {
-        return root + File.separator + (directory == null ? defaultDirectory : directory);
+        Config config = new Config(filterConfig);
+        templateLocation = config.getString(TEMPLATE_LOCATION_PARAM, DEFAULT_TEMPLATE_LOCATION);
+        cssLocation = config.getString(CSS_LOCATION_PARAM, DEFAULT_CSS_LOCATION);
+        cacheLocation = config.getString(CACHE_LOCATION_PARAM, DEFAULT_CACHE_LOCATION);
+        onlyRunWhenKey = config.getString(ONLY_RUN_KEY_PARAM);
+        onlyRunWhenValue = config.getString(ONLY_RUN_VALUE_PARAM);
+        rethrowExceptions = config.getBoolean(RETHROW_EXCEPTIONS_PARAM, false);
+        cache = config.getBoolean(CACHE_PARAM, true);
+        updateScript = buildUpdateScript();
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -86,33 +86,52 @@ public class SassCompilingFilter implements Filter {
 
     private synchronized boolean timeToRun() {
         long now = Clock.now().getTime();
-        
+
         if(now - lastRun >= DWELL) {
             lastRun = Clock.now().getTime();
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
-    private String buildUpdateScript(String templateLocation, String cssLocation, String cacheLocation) {
+    private String buildUpdateScript() {
         StringWriter raw = new StringWriter();
         PrintWriter script = new PrintWriter(raw);
 
-        script.println("  require 'rubygems'                                                  ");
-        script.println("  require 'sass/plugin'                                               ");
-        script.println("  Sass::Plugin.options.merge!(                                        ");
-        script.println("    :template_location => '" + replaceSlashes(templateLocation) + "', ");
-        script.println("    :css_location => '" + replaceSlashes(cssLocation) + "',           ");
-        script.println("    :cache => " + cache + ",                                          ");
-        script.println("    :cache_store => nil,                                              ");
-        script.println("    :cache_location => '" + replaceSlashes(cacheLocation) + "'        ");
-        script.println("  )                                                                   ");
-        script.println("  Sass::Plugin.check_for_updates                                      ");
+        script.println("  require 'rubygems'                                       ");
+        script.println("  require 'sass/plugin'                                    ");
+        script.println("  Sass::Plugin.options.merge!(                             ");
+        script.println("    :template_location => '" + getTemplateLocation() + "', ");
+        script.println("    :css_location => '" + getCssLocation() + "',           ");
+        script.println("    :cache => " + wantsCaching() + ",                      ");
+        script.println("    :cache_store => nil,                                   ");
+        script.println("    :cache_location => '" + getCacheLocation() + "'        ");
+        script.println("  )                                                        ");
+        script.println("  Sass::Plugin.check_for_updates                           ");
         script.flush();
 
         return raw.toString();
+    }
+
+    protected boolean wantsCaching() {
+        return cache;
+    }
+
+    private String getCacheLocation() {
+        return replaceSlashes(fullPath(cacheLocation));
+    }
+
+    private String getCssLocation() {
+        return replaceSlashes(fullPath(cssLocation));
+    }
+
+    private String getTemplateLocation() {
+        return replaceSlashes(fullPath(templateLocation));
+    }
+
+    private String fullPath(String directory) {
+        return rootWebPath + File.separator + directory;
     }
 
     private String replaceSlashes(String path) {
