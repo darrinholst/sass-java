@@ -19,6 +19,7 @@ public class SassCompilingFilter implements Filter {
     protected static final String TEMPLATE_LOCATION_PARAM = "templateLocation";
     protected static final String CSS_LOCATION_PARAM = "cssLocation";
     protected static final String CACHE_LOCATION_PARAM = "cacheLocation";
+    protected static final String CACHE_PARAM = "cache";
     protected static final String DEFAULT_TEMPLATE_LOCATION = "WEB-INF" + File.separator + "sass";
     protected static final String DEFAULT_CSS_LOCATION = "stylesheets";
     protected static final String DEFAULT_CACHE_LOCATION = "WEB-INF" + File.separator + ".sass-cache";
@@ -28,6 +29,7 @@ public class SassCompilingFilter implements Filter {
     private String onlyRunWhenKey;
     private String onlyRunWhenValue;
     private boolean rethrowExceptions;
+    private boolean cache;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         String root = new File(filterConfig.getServletContext().getRealPath("/")).getAbsolutePath();
@@ -37,6 +39,8 @@ public class SassCompilingFilter implements Filter {
         onlyRunWhenKey = filterConfig.getInitParameter(ONLY_RUN_KEY_PARAM);
         onlyRunWhenValue = filterConfig.getInitParameter(ONLY_RUN_VALUE_PARAM);
         rethrowExceptions = Boolean.parseBoolean(filterConfig.getInitParameter(RETHROW_EXCEPTIONS_PARAM));
+        String cacheParameter = filterConfig.getInitParameter(CACHE_PARAM);
+        cache = cacheParameter == null ? true : Boolean.parseBoolean(cacheParameter);
 
         updateScript = buildUpdateScript(templateLocation, cssLocation, cacheLocation);
     }
@@ -101,6 +105,7 @@ public class SassCompilingFilter implements Filter {
         script.println("  Sass::Plugin.options.merge!(                                        ");
         script.println("    :template_location => '" + replaceSlashes(templateLocation) + "', ");
         script.println("    :css_location => '" + replaceSlashes(cssLocation) + "',           ");
+        script.println("    :cache => " + cache + ",                                          ");
         script.println("    :cache_store => nil,                                              ");
         script.println("    :cache_location => '" + replaceSlashes(cacheLocation) + "'        ");
         script.println("  )                                                                   ");

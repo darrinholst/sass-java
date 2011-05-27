@@ -86,6 +86,16 @@ public class SassCompilingFilterTest {
     }
 
     @Test
+    public void canTurnCachingOff() throws Exception {
+        setupDefaultDirectories();
+        addScssFileTo(fullPathOf(DEFAULT_TEMPLATE_LOCATION), "foo");
+
+        initAndRunFilter(CACHE_PARAM, "false");
+
+        assertDirectoryEmpty(DEFAULT_CACHE_LOCATION);
+    }
+
+    @Test
     public void compileFromSpecifiedDirectory() throws Exception {
         setupDirectories(DEFAULT_CACHE_LOCATION, DEFAULT_CSS_LOCATION, SOME_OTHER_DIRECTORY);
         addScssFileTo(fullPathOf(SOME_OTHER_DIRECTORY), "foo");
@@ -235,12 +245,16 @@ public class SassCompilingFilterTest {
         return FileUtils.readFileToString(new File(directory, filename));
     }
 
-    private void initAndRunFilter() throws ServletException, IOException {
-        initFilter();
+    private void initAndRunFilter(String...parameters) throws ServletException, IOException {
+        initFilter(parameters);
         runFilter();
     }
 
-    private void initFilter() throws ServletException {
+    private void initFilter(String...parameters) throws ServletException {
+        for(int i = 0; i < parameters.length; i += 2) {
+            when(filterConfig.getInitParameter(parameters[i])).thenReturn(parameters[i + 1]);
+        }
+        
         filter.init(filterConfig);
     }
 
