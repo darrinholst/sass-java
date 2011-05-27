@@ -42,7 +42,7 @@ pom.xml
 
 **Ant**
 
-Download the [jar with depenencies](http://sass-java.googlecode.com/svn/repo/com/sass-lang/sass-java/3.1.1.3/sass-java-3.1.1.4-jar-with-dependencies.jar)
+Download the [jar with depenencies](http://sass-java.googlecode.com/svn/repo/com/sass-lang/sass-java/3.1.1.4/sass-java-3.1.1.4-jar-with-dependencies.jar)
 
 ##Config
 
