@@ -22,7 +22,7 @@
     <repositories>
         <repository>
             <id>darrinholst-maven</id>
-            <url>http://darrinholst-maven.googlecode.com/svn/repo/</url>
+            <url>http://sass-java.googlecode.com/svn/repo/</url>
         </repository>
     </repositories>
 
@@ -30,7 +30,7 @@
         <repository>
             <uniqueVersion>false</uniqueVersion>
             <id>darrinholst</id>
-            <url>svn:https://darrinholst-maven.googlecode.com/svn/repo/</url>
+            <url>svn:https://sass-java.googlecode.com/svn/repo/</url>
         </repository>
     </distributionManagement>
 
