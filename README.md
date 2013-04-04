@@ -1,11 +1,11 @@
-# Sass for Java
+# **NOTE**: As of version 3.2.7 we are using compass to compile your sass!
 
-Don't let those ruby devs have all the fun, with a simple filter you can
-have sass in your java too.
+# sass-java
+Compiles sass to css on-the-fly with [compass](http://compass-style.org/) via a j2ee servlet filter
+
 
 ## Usage
-
-Add this to your web.xml
+Add this to your `web.xml`
 
     <filter>
         <filter-name>SassCompiler</filter-name>
@@ -17,7 +17,12 @@ Add this to your web.xml
         <url-pattern>*.css</url-pattern>
     </filter-mapping>
 
-Put your sass templates in WEB-INF/sass and each request for a css
+Create a `WEB-INF/sass/config.rb` file that looks something like
+
+    css_dir = "../../stylesheets"
+    sass_dir = "."
+    
+Put your sass templates in `WEB-INF/sass` and each request for a css
 file will regenerate as needed.
 
 **Maven**
@@ -36,34 +41,22 @@ pom.xml
         <dependency>
             <groupId>com.sass-lang</groupId>
             <artifactId>sass-java</artifactId>
-            <version>3.1.1.4</version>
+            <version>3.2.7</version>
         </dependency>
     </dependencies>
 
 **Ant**
 
-Download the [jar with depenencies](http://sass-java.googlecode.com/svn/repo/com/sass-lang/sass-java/3.1.1.4/sass-java-3.1.1.4-jar-with-dependencies.jar)
+Download the [jar with depenencies](http://sass-java.googlecode.com/svn/repo/com/sass-lang/sass-java/3.2.7/sass-java-3.2.7-jar-with-dependencies.jar)
 
 ##Config
+Configuration is done through a combination of filter init parameters and the `config.rb` file. The following filter init parameters are available to control the execution of the filter:
 
-Configuration is done through filter init parameters
+* **configLocation** - the location of the config.rb (default WEB-INF/sass/config.rb)
+* **onlyRunWhenKey** - the system property or environment variable to check to see if sass compilation should run, use this to turn sass generation off in production
+* **onlyRunWhenValue** - the corresponding value to check to see if sass compilation should run
 
-* **templateLocation** - the location where the sass templates will be
-  found (default WEB-INF/sass)
-* **cssLocation** - the location where the sass templates will be
-  compiled to (default stylesheets)
-* **cacheLocation** - the location that sass will use for compile
-  caching (default WEB-INF/.sass-cache)
-* **cache** - turn caching on/off (default true)
-* **onlyRunWhenKey** - the system property or environment variable to
-  check to see if sass compilation should run, use this to turn sass
-  generation off in production
-* **onlyRunWhenValue** - the corresponding value to check to see if sass
-  compilation should run
-
-You probably only want the css generation to run in development mode and
-then commit the generated css to source control. This is achieved by the
-`onlyRunWhenKey` and `onlyRunWhenValue` filter init parameters.
+You probably only want the css generation to run in development mode and then commit the generated css to source control. This is achieved by the `onlyRunWhenKey` and `onlyRunWhenValue` filter init parameters.
 
     <filter>
         <filter-name>SassCompiler</filter-name>
@@ -78,9 +71,9 @@ then commit the generated css to source control. This is achieved by the
         </init-param>
     </filter>
 
-With this configuration the filter will check a system property or
-environment variable called RUNTIME_ENVIRONMENT and only run the sass
-compilation if that value is equal to local
+With this configuration the filter will check a system property or environment variable called RUNTIME_ENVIRONMENT and only run the sass compilation if that value is equal to local
+
+See the [compass config documentation](http://compass-style.org/help/tutorials/configuration-reference/) to find out about all the wonderful things you can put in `config.rb`. For those config options that reference a file or directory, the working directory that compass will be executed in is the directory that contains `config.rb`.
 
 ##Try it out
 1. git clone https://github.com/darrinholst/sass-java.git
