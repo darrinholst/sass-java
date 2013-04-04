@@ -17,20 +17,10 @@
             <param-name>onlyRunWhenValue</param-name>
             <param-value>local</param-value>
         </init-param>
-        <!--
         <init-param>
-            <param-name>templateLocation</param-name>
-            <param-value>some/other/location</param-value>
+            <param-name>configLocation</param-name>
+            <param-value>WEB-INF/sass/config.rb</param-value>
         </init-param>
-        <init-param>
-            <param-name>cssLocation</param-name>
-            <param-value>some/other/location</param-value>
-        </init-param>
-        <init-param>
-            <param-name>cacheLocation</param-name>
-            <param-value>some/other/location</param-value>
-        </init-param>
-        -->
     </filter>
 
     <filter-mapping>

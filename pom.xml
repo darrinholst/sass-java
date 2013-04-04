@@ -4,7 +4,7 @@
 
     <groupId>com.sass-lang</groupId>
     <artifactId>sass-java</artifactId>
-    <version>3.1.1.5-SNAPSHOT</version>
+    <version>3.2.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <licenses>
@@ -38,12 +38,12 @@
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-complete</artifactId>
-            <version>1.6.1</version>
+            <version>1.7.3</version>
         </dependency>
         <dependency>
-            <groupId>com.sass-lang</groupId>
-            <artifactId>sass-gems</artifactId>
-            <version>3.1.1</version>
+            <groupId>org.compass-style</groupId>
+            <artifactId>compass-gems</artifactId>
+            <version>0.12.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
