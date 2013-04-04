@@ -2,6 +2,7 @@
    v2.0 | 20110126
    License: none (public domain)
 */
+/* line 18, /Users/darrinholst/Projects/dh/sass-java/src/test/sample-webapp/WEB-INF/sass/reset.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -20,27 +21,40 @@ time, mark, audio, video {
   border: 0;
   font-size: 100%;
   font: inherit;
-  vertical-align: baseline; }
+  vertical-align: baseline;
+}
 
 /* HTML5 display-role reset for older browsers */
+/* line 28, /Users/darrinholst/Projects/dh/sass-java/src/test/sample-webapp/WEB-INF/sass/reset.scss */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
-  display: block; }
+  display: block;
+}
 
+/* line 31, /Users/darrinholst/Projects/dh/sass-java/src/test/sample-webapp/WEB-INF/sass/reset.scss */
 body {
-  line-height: 1; }
+  line-height: 1;
+}
 
+/* line 34, /Users/darrinholst/Projects/dh/sass-java/src/test/sample-webapp/WEB-INF/sass/reset.scss */
 ol, ul {
-  list-style: none; }
+  list-style: none;
+}
 
+/* line 37, /Users/darrinholst/Projects/dh/sass-java/src/test/sample-webapp/WEB-INF/sass/reset.scss */
 blockquote, q {
-  quotes: none; }
+  quotes: none;
+}
 
+/* line 41, /Users/darrinholst/Projects/dh/sass-java/src/test/sample-webapp/WEB-INF/sass/reset.scss */
 blockquote:before, blockquote:after,
 q:before, q:after {
   content: '';
-  content: none; }
+  content: none;
+}
 
+/* line 45, /Users/darrinholst/Projects/dh/sass-java/src/test/sample-webapp/WEB-INF/sass/reset.scss */
 table {
   border-collapse: collapse;
-  border-spacing: 0; }
+  border-spacing: 0;
+}

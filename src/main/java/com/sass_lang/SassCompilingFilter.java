@@ -1,47 +1,40 @@
 package com.sass_lang;
 
+import org.jruby.embed.ScriptingContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SassCompilingFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(SassCompilingFilter.class);
-    private static final int DWELL = 2000;
+    private static final int DWELL = 1000;
+    protected static final String RETHROW_EXCEPTIONS_PARAM = "rethrowExceptions";
     protected static final String ONLY_RUN_KEY_PARAM = "onlyRunWhenKey";
     protected static final String ONLY_RUN_VALUE_PARAM = "onlyRunWhenValue";
-    protected static final String RETHROW_EXCEPTIONS_PARAM = "rethrowExceptions";
-    protected static final String CACHE_LOCATION_PARAM = "cacheLocation";
-    protected static final String CSS_LOCATION_PARAM = "cssLocation";
-    protected static final String TEMPLATE_LOCATION_PARAM = "templateLocation";
-    protected static final String CACHE_PARAM = "cache";
-
-    protected static final String DEFAULT_CACHE_LOCATION = "WEB-INF" + File.separator + ".sass-cache";
-    protected static final String DEFAULT_CSS_LOCATION = "stylesheets";
-    protected static final String DEFAULT_TEMPLATE_LOCATION = "WEB-INF" + File.separator + "sass";
-
+    protected static final String CONFIG_LOCATION_PARAM = "configLocation";
+    protected static final String DEFAULT_CONFIG_LOCATION = "WEB-INF" + File.separator + "sass" + File.separator + "config.rb";
 
     private long lastRun;
     private String onlyRunWhenKey;
     private String onlyRunWhenValue;
     private boolean rethrowExceptions;
-    private Compiler compiler = new Compiler();
-    private AtomicBoolean compiling = new AtomicBoolean(false);
+    private String configLocation;
+    private String rootWebPath;
+    private String updateScript;
 
     public void init(FilterConfig filterConfig) throws ServletException {
         Config config = new Config(filterConfig);
-
         onlyRunWhenKey = config.getString(ONLY_RUN_KEY_PARAM);
         onlyRunWhenValue = config.getString(ONLY_RUN_VALUE_PARAM);
         rethrowExceptions = config.getBoolean(RETHROW_EXCEPTIONS_PARAM, false);
-
-        compiler.setCacheLocation(getCacheLocation(config));
-        compiler.setCssLocation(getCssLocation(config));
-        compiler.setTemplateLocation(getTemplateLocation(config));
-        compiler.setCache(config.getBoolean(CACHE_PARAM, true));
+        configLocation = config.getString(CONFIG_LOCATION_PARAM, DEFAULT_CONFIG_LOCATION);
+        updateScript = buildUpdateScript();
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -49,32 +42,20 @@ public class SassCompilingFilter implements Filter {
             run();
         }
 
-        while (compiling.get()) waitABit();
-
         filterChain.doFilter(servletRequest, servletResponse);
-    }
-
-    private void waitABit() {
-        try {
-            Thread.sleep(100L);
-        } catch (InterruptedException e) {
-        }
     }
 
     private void run() {
         LOG.debug("compiling sass");
 
         try {
-            compiling.set(true);
-            compiler.compile();
+            new ScriptingContainer().runScriptlet(updateScript);
         } catch (Exception e) {
             LOG.warn("exception thrown while compiling sass", e);
 
             if (rethrowExceptions) {
                 throw new RuntimeException(e);
             }
-        } finally {
-            compiling.set(false);
         }
     }
 
@@ -101,26 +82,34 @@ public class SassCompilingFilter implements Filter {
         }
     }
 
-    private File getTemplateLocation(Config config) {
-        return fromRoot(config, config.getString(TEMPLATE_LOCATION_PARAM, DEFAULT_TEMPLATE_LOCATION));
+    private String buildUpdateScript() {
+        StringWriter raw = new StringWriter();
+        PrintWriter script = new PrintWriter(raw);
+
+        script.println("require 'rubygems'                                                ");
+        script.println("require 'compass'                                                 ");
+        script.println("Dir.chdir(File.dirname('" + getConfigLocation() + "')) do         ");
+        script.println("  Compass.add_project_configuration '" + getConfigLocation() + "' ");
+        script.println("  Compass.configure_sass_plugin!                                  ");
+        script.println("  Compass.compiler.run                                            ");
+        script.println("end                                                               ");
+        script.flush();
+
+        return raw.toString();
     }
 
-    private File fromRoot(Config config, String directory) {
-        return new File(config.getRootPath(), directory);
+    private String getConfigLocation() {
+        return replaceSlashes(fullPath(configLocation));
     }
 
-    private File getCssLocation(Config config) {
-        return fromRoot(config, config.getString(CSS_LOCATION_PARAM, DEFAULT_CSS_LOCATION));
+    private String fullPath(String directory) {
+        return rootWebPath + File.separator + directory;
     }
 
-    private File getCacheLocation(Config config) {
-        return fromRoot(config, config.getString(CACHE_LOCATION_PARAM, DEFAULT_CACHE_LOCATION));
+    private String replaceSlashes(String path) {
+        return path.replaceAll("\\\\", "/");
     }
 
     public void destroy() {
-    }
-
-    public void setCompiler(Compiler compiler) {
-        this.compiler = compiler;
     }
 }
