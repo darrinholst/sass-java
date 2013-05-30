@@ -34,6 +34,9 @@ public class SassCompilingFilter implements Filter {
                 config.getRootPath(),
                 config.getString(CONFIG_LOCATION_PARAM, DEFAULT_CONFIG_LOCATION)
         ));
+
+        if (environmentAllowsRunning()) compiler.compile();
+
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -72,7 +75,7 @@ public class SassCompilingFilter implements Filter {
     }
 
     private boolean shouldRun() {
-        return environmentAllowsRunning() && timeToRun();
+        return !compiling.get() && environmentAllowsRunning() && timeToRun();
     }
 
     private boolean environmentAllowsRunning() {
