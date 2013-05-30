@@ -42,6 +42,8 @@ public class SassCompilingFilter implements Filter {
         compiler.setCssLocation(getCssLocation(config));
         compiler.setTemplateLocation(getTemplateLocation(config));
         compiler.setCache(config.getBoolean(CACHE_PARAM, true));
+
+        if (environmentAllowsRunning()) compiler.compile();
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -79,7 +81,7 @@ public class SassCompilingFilter implements Filter {
     }
 
     private boolean shouldRun() {
-        return environmentAllowsRunning() && timeToRun();
+        return !compiling.get() && environmentAllowsRunning() && timeToRun();
     }
 
     private boolean environmentAllowsRunning() {

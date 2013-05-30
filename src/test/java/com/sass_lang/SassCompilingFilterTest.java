@@ -60,6 +60,34 @@ public class SassCompilingFilterTest {
     }
 
     @Test
+    public void initShouldCompileFiles() throws ServletException {
+        Compiler compiler = mock(Compiler.class);
+
+        filter.setCompiler(compiler);
+
+        initFilter();
+
+        verify(compiler).compile();
+    }
+
+    @Test
+    public void compilerShouldNotBeInvokedIfItIsAlreadyCompiling() throws Exception {
+        StubCompiler compiler = new StubCompiler(1L, 2000L, 1L);
+        filter.setCompiler(compiler);
+
+        setupDefaultDirectories();
+        initFilter();
+
+        Thread thread = processRequestOnAnotherThread(servletRequest);
+        clock.incrementSeconds(4);
+        runFilter(servletRequest);
+
+        thread.join();
+
+        assertEquals(2, compiler.getNumberOfCompiles());
+    }
+
+    @Test
     public void requestsShouldBlockUntilTheCompilingHasCompleted() throws Exception {
         ArgumentCaptor<ServletRequest> captor = ArgumentCaptor.forClass(ServletRequest.class);
         filter.setCompiler(new StubCompiler(2000L, 1L));
@@ -373,6 +401,10 @@ public class SassCompilingFilterTest {
                 Thread.sleep(compileTimes.get(i++));
             } catch (InterruptedException e) {
             }
+        }
+
+        public int getNumberOfCompiles() {
+            return i;
         }
     }
 }
