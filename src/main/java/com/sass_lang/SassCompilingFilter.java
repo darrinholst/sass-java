@@ -29,6 +29,7 @@ public class SassCompilingFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {
         Config config = new Config(filterConfig);
+        rootWebPath = config.getRootPath().getAbsolutePath();
         onlyRunWhenKey = config.getString(ONLY_RUN_KEY_PARAM);
         onlyRunWhenValue = config.getString(ONLY_RUN_VALUE_PARAM);
         rethrowExceptions = config.getBoolean(RETHROW_EXCEPTIONS_PARAM, false);
