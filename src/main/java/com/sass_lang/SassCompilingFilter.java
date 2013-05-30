@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SassCompilingFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(SassCompilingFilter.class);
@@ -27,7 +28,8 @@ public class SassCompilingFilter implements Filter {
     private String onlyRunWhenKey;
     private String onlyRunWhenValue;
     private boolean rethrowExceptions;
-    private Compiler compiler;
+    private Compiler compiler = new Compiler();
+    private AtomicBoolean compiling = new AtomicBoolean(false);
 
     public void init(FilterConfig filterConfig) throws ServletException {
         Config config = new Config(filterConfig);
@@ -36,7 +38,6 @@ public class SassCompilingFilter implements Filter {
         onlyRunWhenValue = config.getString(ONLY_RUN_VALUE_PARAM);
         rethrowExceptions = config.getBoolean(RETHROW_EXCEPTIONS_PARAM, false);
 
-        compiler = new Compiler();
         compiler.setCacheLocation(getCacheLocation(config));
         compiler.setCssLocation(getCssLocation(config));
         compiler.setTemplateLocation(getTemplateLocation(config));
@@ -48,13 +49,23 @@ public class SassCompilingFilter implements Filter {
             run();
         }
 
+        while (compiling.get()) waitABit();
+
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private void waitABit() {
+        try {
+            Thread.sleep(100L);
+        } catch (InterruptedException e) {
+        }
     }
 
     private void run() {
         LOG.debug("compiling sass");
 
         try {
+            compiling.set(true);
             compiler.compile();
         } catch (Exception e) {
             LOG.warn("exception thrown while compiling sass", e);
@@ -62,6 +73,8 @@ public class SassCompilingFilter implements Filter {
             if (rethrowExceptions) {
                 throw new RuntimeException(e);
             }
+        } finally {
+            compiling.set(false);
         }
     }
 
@@ -105,5 +118,9 @@ public class SassCompilingFilter implements Filter {
     }
 
     public void destroy() {
+    }
+
+    public void setCompiler(Compiler compiler) {
+        this.compiler = compiler;
     }
 }

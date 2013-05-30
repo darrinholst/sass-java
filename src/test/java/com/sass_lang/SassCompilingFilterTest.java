@@ -7,6 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -14,13 +15,17 @@ import javax.servlet.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.sass_lang.SassCompilingFilter.*;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SassCompilingFilterTest {
@@ -52,6 +57,25 @@ public class SassCompilingFilterTest {
     @After
     public void teardown() throws Exception {
         System.clearProperty(ONLY_RUN_KEY);
+    }
+
+    @Test
+    public void requestsShouldBlockUntilTheCompilingHasCompleted() throws Exception {
+        ArgumentCaptor<ServletRequest> captor = ArgumentCaptor.forClass(ServletRequest.class);
+        filter.setCompiler(new StubCompiler(2000L, 1L));
+        final ServletRequest request = mock(ServletRequest.class, "request");
+        ServletRequest otherRequest = mock(ServletRequest.class, "otherRequest");
+
+        setupDefaultDirectories();
+        initFilter();
+
+        Thread thread = processRequestOnAnotherThread(request);
+        runFilter(otherRequest);
+
+        thread.join();
+
+        verify(filterChain, times(2)).doFilter(captor.capture(), eq(servletResponse));
+        assertEquals(Arrays.asList(request, otherRequest), captor.getAllValues());
     }
 
     @Test
@@ -234,34 +258,55 @@ public class SassCompilingFilterTest {
                 latch.countDown();
                 latch.await();
                 runFilter();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 exceptionThrown = true;
                 throw new RuntimeException(e);
             }
         }
     }
 
+    private Thread processRequestOnAnotherThread(final ServletRequest request) throws InterruptedException {
+        final AtomicBoolean requestProcessing = new AtomicBoolean(false);
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                requestProcessing.set(true);
+                runFilter(request);
+            }
+        });
+        thread.start();
+
+        while (!requestProcessing.get()) {
+            Thread.sleep(10L);
+        }
+
+        return thread;
+    }
+
     private String contentsOf(File directory, String filename) throws Exception {
         return FileUtils.readFileToString(new File(directory, filename));
     }
 
-    private void initAndRunFilter(String...parameters) throws ServletException, IOException {
+    private void initAndRunFilter(String... parameters) throws ServletException, IOException {
         initFilter(parameters);
         runFilter();
     }
 
-    private void initFilter(String...parameters) throws ServletException {
-        for(int i = 0; i < parameters.length; i += 2) {
+    private void initFilter(String... parameters) throws ServletException {
+        for (int i = 0; i < parameters.length; i += 2) {
             when(filterConfig.getInitParameter(parameters[i])).thenReturn(parameters[i + 1]);
         }
-        
+
         filter.init(filterConfig);
     }
 
     private void runFilter() {
+        runFilter(servletRequest);
+    }
+
+    private void runFilter(ServletRequest request) {
         try {
-            filter.doFilter(servletRequest, servletResponse, filterChain);
-        } catch(Exception e) {
+            filter.doFilter(request, servletResponse, filterChain);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -304,7 +349,7 @@ public class SassCompilingFilterTest {
     private void clearDirectory(String directoryName) {
         List<String> filenames = directoryListing(directoryName);
 
-        for(String filename : filenames) {
+        for (String filename : filenames) {
             File file = new File(fullPathOf(directoryName), filename);
             assertTrue("trying to delete " + filename, file.delete());
         }
@@ -312,5 +357,22 @@ public class SassCompilingFilterTest {
 
     private List<String> directoryListing(String directoryName) {
         return asList(fullPathOf(directoryName).list());
+    }
+
+    private class StubCompiler extends Compiler {
+        private ArrayList<Long> compileTimes = new ArrayList<Long>();
+        private int i;
+
+        private StubCompiler(Long... compileTimes) {
+            this.compileTimes.addAll(Arrays.asList(compileTimes));
+        }
+
+        @Override
+        public void compile() {
+            try {
+                Thread.sleep(compileTimes.get(i++));
+            } catch (InterruptedException e) {
+            }
+        }
     }
 }
