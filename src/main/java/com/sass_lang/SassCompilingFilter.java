@@ -1,14 +1,12 @@
 package com.sass_lang;
 
-import org.jruby.embed.ScriptingContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SassCompilingFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(SassCompilingFilter.class);
@@ -19,21 +17,23 @@ public class SassCompilingFilter implements Filter {
     protected static final String CONFIG_LOCATION_PARAM = "configLocation";
     protected static final String DEFAULT_CONFIG_LOCATION = "WEB-INF" + File.separator + "sass" + File.separator + "config.rb";
 
-    private String rootWebPath;
     private long lastRun;
     private String onlyRunWhenKey;
     private String onlyRunWhenValue;
     private boolean rethrowExceptions;
-    private String configLocation;
-    private boolean initialized;
+    private Compiler compiler = new Compiler();
+    private AtomicBoolean compiling = new AtomicBoolean(false);
 
     public void init(FilterConfig filterConfig) throws ServletException {
         Config config = new Config(filterConfig);
-        rootWebPath = config.getRootPath().getAbsolutePath();
         onlyRunWhenKey = config.getString(ONLY_RUN_KEY_PARAM);
         onlyRunWhenValue = config.getString(ONLY_RUN_VALUE_PARAM);
         rethrowExceptions = config.getBoolean(RETHROW_EXCEPTIONS_PARAM, false);
-        configLocation = config.getString(CONFIG_LOCATION_PARAM, DEFAULT_CONFIG_LOCATION);
+
+        compiler.setConfigLocation(new File(
+                config.getRootPath(),
+                config.getString(CONFIG_LOCATION_PARAM, DEFAULT_CONFIG_LOCATION)
+        ));
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -41,33 +41,34 @@ public class SassCompilingFilter implements Filter {
             run();
         }
 
+        while (compiling.get()) waitABit();
+
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private void waitABit() {
+        try {
+            Thread.sleep(100L);
+        } catch (InterruptedException e) {
+
+        }
     }
 
     private void run() {
         LOG.debug("compiling sass");
 
         try {
-            initialize();
-            compile();
+            compiling.set(true);
+            compiler.compile();
         } catch (Exception e) {
             LOG.warn("exception thrown while compiling sass", e);
 
             if (rethrowExceptions) {
                 throw new RuntimeException(e);
             }
+        } finally {
+            compiling.set(false);
         }
-    }
-
-    private void initialize() {
-        if (!initialized) {
-            new ScriptingContainer().runScriptlet(buildInitializationScript());
-            initialized = true;
-        }
-    }
-
-    private void compile() {
-        new ScriptingContainer().runScriptlet(buildCompileScript());
     }
 
     private boolean shouldRun() {
@@ -93,46 +94,10 @@ public class SassCompilingFilter implements Filter {
         }
     }
 
-    private String buildInitializationScript() {
-        StringWriter raw = new StringWriter();
-        PrintWriter script = new PrintWriter(raw);
-
-        script.println("require 'rubygems'                                                         ");
-        script.println("require 'compass'                                                          ");
-        script.println("frameworks = Dir.new(Compass::Frameworks::DEFAULT_FRAMEWORKS_PATH).path    ");
-        script.println("Compass::Frameworks.register_directory(File.join(frameworks, 'compass'))   ");
-        script.println("Compass::Frameworks.register_directory(File.join(frameworks, 'blueprint')) ");
-        script.println("Compass.add_project_configuration '" + getConfigLocation() + "'            ");
-        script.println("Compass.configure_sass_plugin!                                             ");
-        script.flush();
-
-        return raw.toString();
-    }
-
-    private String buildCompileScript() {
-        StringWriter raw = new StringWriter();
-        PrintWriter script = new PrintWriter(raw);
-
-        script.println("Dir.chdir(File.dirname('" + getConfigLocation() + "')) do ");
-        script.println("  Compass.compiler.run                                    ");
-        script.println("end                                                       ");
-        script.flush();
-
-        return raw.toString();
-    }
-
-    private String getConfigLocation() {
-        return replaceSlashes(fullPath(configLocation));
-    }
-
-    private String fullPath(String directory) {
-        return rootWebPath + File.separator + directory;
-    }
-
-    private String replaceSlashes(String path) {
-        return path.replaceAll("\\\\", "/");
-    }
-
     public void destroy() {
+    }
+
+    public void setCompiler(Compiler compiler) {
+        this.compiler = compiler;
     }
 }

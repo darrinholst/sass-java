@@ -64,10 +64,10 @@ public class SassCompilingFilterTest {
         System.clearProperty(ONLY_RUN_KEY);
     }
 
-    @Test @Ignore
+    @Test
     public void requestsShouldBlockUntilTheCompilingHasCompleted() throws Exception {
         ArgumentCaptor<ServletRequest> captor = ArgumentCaptor.forClass(ServletRequest.class);
-//        filter.setCompiler(new StubCompiler(2000L, 1L));
+        filter.setCompiler(new StubCompiler(2000L, 1L));
         final ServletRequest request = mock(ServletRequest.class, "request");
         ServletRequest otherRequest = mock(ServletRequest.class, "otherRequest");
 

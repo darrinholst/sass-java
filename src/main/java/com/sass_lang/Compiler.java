@@ -7,67 +7,58 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class Compiler {
-    private File cacheLocation;
-    private File cssLocation;
-    private File templateLocation;
-    private boolean cache;
+    private boolean initialized;
+    private File configLocation;
 
     public void compile() {
-        new ScriptingContainer().runScriptlet(buildUpdateScript());
+        initialize();
+        new ScriptingContainer().runScriptlet(buildCompileScript());
     }
 
-    private String buildUpdateScript() {
+    private void initialize() {
+        if (!initialized) {
+            new ScriptingContainer().runScriptlet(buildInitializationScript());
+            initialized = true;
+        }
+    }
+
+    private String buildCompileScript() {
         StringWriter raw = new StringWriter();
         PrintWriter script = new PrintWriter(raw);
 
-        script.println("  require 'rubygems'                                       ");
-        script.println("  require 'sass/plugin'                                    ");
-        script.println("  Sass::Plugin.options.merge!(                             ");
-        script.println("    :template_location => '" + getTemplateLocation() + "', ");
-        script.println("    :css_location => '" + getCssLocation() + "',           ");
-        script.println("    :cache => " + wantsCaching() + ",                      ");
-        script.println("    :cache_store => nil,                                   ");
-        script.println("    :cache_location => '" + getCacheLocation() + "'        ");
-        script.println("  )                                                        ");
-        script.println("  Sass::Plugin.check_for_updates                           ");
+        script.println("Dir.chdir(File.dirname('" + getConfigLocation() + "')) do ");
+        script.println("  Compass.compiler.run                                    ");
+        script.println("end                                                       ");
         script.flush();
 
         return raw.toString();
     }
 
-    protected boolean wantsCaching() {
-        return cache;
+    private String buildInitializationScript() {
+        StringWriter raw = new StringWriter();
+        PrintWriter script = new PrintWriter(raw);
+
+        script.println("require 'rubygems'                                                         ");
+        script.println("require 'compass'                                                          ");
+        script.println("frameworks = Dir.new(Compass::Frameworks::DEFAULT_FRAMEWORKS_PATH).path    ");
+        script.println("Compass::Frameworks.register_directory(File.join(frameworks, 'compass'))   ");
+        script.println("Compass::Frameworks.register_directory(File.join(frameworks, 'blueprint')) ");
+        script.println("Compass.add_project_configuration '" + getConfigLocation() + "'            ");
+        script.println("Compass.configure_sass_plugin!                                             ");
+        script.flush();
+
+        return raw.toString();
     }
 
-    private String getCacheLocation() {
-        return replaceSlashes(cacheLocation.getAbsolutePath());
-    }
-
-    private String getCssLocation() {
-        return replaceSlashes(cssLocation.getAbsolutePath());
-    }
-
-    private String getTemplateLocation() {
-        return replaceSlashes(templateLocation.getAbsolutePath());
+    private String getConfigLocation() {
+        return replaceSlashes(configLocation.getAbsolutePath());
     }
 
     private String replaceSlashes(String path) {
         return path.replaceAll("\\\\", "/");
     }
 
-    public void setCacheLocation(File cacheLocation) {
-        this.cacheLocation = cacheLocation;
-    }
-
-    public void setCssLocation(File cssLocation) {
-        this.cssLocation = cssLocation;
-    }
-
-    public void setTemplateLocation(File templateLocation) {
-        this.templateLocation = templateLocation;
-    }
-
-    public void setCache(boolean cache) {
-        this.cache = cache;
+    public void setConfigLocation(File configLocation) {
+        this.configLocation = configLocation;
     }
 }
