@@ -1,4 +1,4 @@
-# **NOTE**: As of version 3.2.7 we are using compass to compile your sass!
+**NOTE**: *As of version 3.2.7 we are using compass to compile your sass!*
 
 # sass-java
 Compiles sass to css on-the-fly with [compass](http://compass-style.org/) via a j2ee servlet filter
