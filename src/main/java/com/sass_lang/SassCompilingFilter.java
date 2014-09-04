@@ -81,7 +81,7 @@ public class SassCompilingFilter implements Filter {
     private boolean environmentAllowsRunning() {
         if (onlyRunWhenKey != null) {
             String value = System.getProperty(onlyRunWhenKey, System.getenv(onlyRunWhenKey));
-            return value.equals(onlyRunWhenValue);
+            return onlyRunWhenValue.equalsIgnoreCase(value);
         }
         return true;
     }
