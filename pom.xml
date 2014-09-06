@@ -16,8 +16,8 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/darrinholst/sass-java</url>
-        <developerConnection>scm:git:git@github.com:darrinholst/sass-java.git</developerConnection>
+        <url>https://github.com/digaobarbosa/sass-java.git</url>
+        <developerConnection>scm:git:git@github.com:digaobarbosa/sass-java.git</developerConnection>
     </scm>
 
     <repositories>
