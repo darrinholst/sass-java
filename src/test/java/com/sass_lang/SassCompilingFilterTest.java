@@ -26,10 +26,10 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SassCompilingFilterTest {
-    private static final String SOME_OTHER_DIRECTORY = "someOtherDirectory";
     private static final String ONLY_RUN_KEY = "unit_test_environment";
     private static final String CSS_LOCATION = "css";
     private static final String SASS_LOCATION = "WEB-INF/sass";
+
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -165,6 +165,31 @@ public class SassCompilingFilterTest {
         initAndRunFilter();
 
         assertDirectoryNotEmpty(CSS_LOCATION);
+    }
+
+    @Test
+    public void runsOnlyInDevelopmentModeAndDoesNotCareAboutCase() throws Exception {
+        setupDefaultDirectoriesAndConfigFile();
+        addScssFileTo(fullPathOf(SASS_LOCATION), "foo");
+        when(filterConfig.getInitParameter(ONLY_RUN_KEY_PARAM)).thenReturn(ONLY_RUN_KEY);
+        when(filterConfig.getInitParameter(ONLY_RUN_VALUE_PARAM)).thenReturn("development");
+        System.setProperty(ONLY_RUN_KEY, "dEvElOpMeNt");
+
+        initAndRunFilter();
+
+        assertDirectoryNotEmpty(CSS_LOCATION);
+    }
+
+    @Test
+    public void doesNotRunInUnknownModes() throws Exception {
+        setupDefaultDirectoriesAndConfigFile();
+        addScssFileTo(fullPathOf(SASS_LOCATION), "foo");
+        when(filterConfig.getInitParameter(ONLY_RUN_KEY_PARAM)).thenReturn(ONLY_RUN_KEY);
+        when(filterConfig.getInitParameter(ONLY_RUN_VALUE_PARAM)).thenReturn("development");
+
+        initAndRunFilter();
+
+        assertDirectoryEmpty(CSS_LOCATION);
     }
 
     @Test
