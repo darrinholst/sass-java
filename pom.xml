@@ -4,7 +4,7 @@
 
     <groupId>com.sass-lang</groupId>
     <artifactId>sass-java</artifactId>
-    <version>3.2.7.3</version>
+    <version>3.2.7.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <parent>
