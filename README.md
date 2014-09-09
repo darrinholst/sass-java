@@ -1,8 +1,5 @@
-**NOTE**: *As of version 3.2.7 we are using compass to compile your sass!*
-
 # sass-java
 Compiles sass to css on-the-fly with [compass](http://compass-style.org/) via a j2ee servlet filter
-
 
 ## Usage
 Add this to your `web.xml`
@@ -27,27 +24,17 @@ file will regenerate as needed.
 
 **Maven**
 
-Since getting stuff in central is a PITA, add the following to your
-pom.xml
-
-    <repositories>
-        <repository>
-            <id>sass-java</id>
-            <url>http://sass-java.googlecode.com/svn/repo/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
-            <groupId>com.sass-lang</groupId>
+            <groupId>com.darrinholst</groupId>
             <artifactId>sass-java</artifactId>
-            <version>3.2.7</version>
+            <version>3.2.7.5</version>
         </dependency>
     </dependencies>
 
 **Ant**
 
-Download the [jar with depenencies](http://sass-java.googlecode.com/svn/repo/com/sass-lang/sass-java/3.2.7/sass-java-3.2.7-jar-with-dependencies.jar)
+Download the [jar with depenencies](https://oss.sonatype.org/content/groups/public/com/darrinholst/sass-java/3.2.7.5/sass-java-3.2.7.5-jar-with-dependencies.jar)
 
 ##Config
 Configuration is done through a combination of filter init parameters and the `config.rb` file. The following filter init parameters are available to control the execution of the filter:
@@ -84,3 +71,4 @@ See the [compass config documentation](http://compass-style.org/help/tutorials/c
 6. change src/test/sample-webapp/WEB-INF/sass/application.scss
 7. repeat step 5
 8. be amazed
+
