@@ -4,7 +4,7 @@
 
     <groupId>com.darrinholst</groupId>
     <artifactId>sass-java</artifactId>
-    <version>3.2.7.5</version>
+    <version>3.2.7.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <parent>
