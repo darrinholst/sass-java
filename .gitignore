@@ -4,3 +4,6 @@ target
 *.iws
 .sass-cache
 *.idea
+.bundle
+*.css
+*.css.map

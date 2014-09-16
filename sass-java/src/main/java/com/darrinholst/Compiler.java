@@ -1,4 +1,4 @@
-package com.sass_lang;
+package com.darrinholst;
 
 import org.jruby.embed.ScriptingContainer;
 
@@ -38,11 +38,7 @@ public class Compiler {
         StringWriter raw = new StringWriter();
         PrintWriter script = new PrintWriter(raw);
 
-        script.println("require 'rubygems'                                                         ");
         script.println("require 'compass'                                                          ");
-        script.println("frameworks = Dir.new(Compass::Frameworks::DEFAULT_FRAMEWORKS_PATH).path    ");
-        script.println("Compass::Frameworks.register_directory(File.join(frameworks, 'compass'))   ");
-        script.println("Compass::Frameworks.register_directory(File.join(frameworks, 'blueprint')) ");
         script.println("Compass.add_project_configuration '" + getConfigLocation() + "'            ");
         script.println("Compass.configure_sass_plugin!                                             ");
         script.flush();

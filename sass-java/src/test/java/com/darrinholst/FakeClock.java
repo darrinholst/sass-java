@@ -1,4 +1,4 @@
-package com.sass_lang;
+package com.darrinholst;
 
 import java.util.Date;
 
@@ -7,7 +7,7 @@ public class FakeClock extends Clock {
 
     @Override
     protected Date getCurrentTime() {
-        return stopped; 
+        return stopped;
     }
 
     public void incrementSeconds(int seconds) {

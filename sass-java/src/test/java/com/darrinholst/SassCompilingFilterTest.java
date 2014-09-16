@@ -1,7 +1,10 @@
-package com.sass_lang;
+package com.darrinholst;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -18,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.sass_lang.SassCompilingFilter.*;
+import static com.darrinholst.SassCompilingFilter.*;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.*;
 import static org.mockito.Matchers.eq;
@@ -118,7 +121,7 @@ public class SassCompilingFilterTest {
 
         initAndRunFilter();
 
-        assertEquals(asList("foo.css"), directoryListing(CSS_LOCATION));
+        assertEquals(asList("foo.css", "foo.css.map"), directoryListing(CSS_LOCATION));
     }
 
     @Test
@@ -213,8 +216,8 @@ public class SassCompilingFilterTest {
 
         initAndRunFilter();
 
-        assertEquals(asList("base.css"), directoryListing(CSS_LOCATION));
-        String expected = "body{color:#000}";
+        assertEquals(asList("base.css", "base.css.map"), directoryListing(CSS_LOCATION));
+        String expected = "body{color:#000}\n/*# sourceMappingURL=base.css.map */";
         assertEquals(expected, contentsOf(fullPathOf(CSS_LOCATION), "base.css").trim());
     }
 
