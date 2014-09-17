@@ -30,7 +30,6 @@
 
     <modules>
         <module>sass-java-gems</module>
-        <module>sass-java-gems-tests</module>
         <module>sass-java</module>
     </modules>
 

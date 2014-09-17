@@ -1,4 +1,4 @@
-package com.darrinholst;
+package com.darrinholst.sass_java;
 
 import javax.servlet.FilterConfig;
 import java.io.File;

@@ -1,4 +1,4 @@
-package com.darrinholst;
+package com.darrinholst.sass_java;
 
 import java.util.Date;
 

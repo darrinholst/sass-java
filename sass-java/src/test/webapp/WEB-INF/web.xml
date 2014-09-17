@@ -8,7 +8,7 @@
 
     <filter>
         <filter-name>SassCompiler</filter-name>
-        <filter-class>com.darrinholst.SassCompilingFilter</filter-class>
+        <filter-class>com.darrinholst.sass_java.SassCompilingFilter</filter-class>
         <init-param>
             <param-name>onlyRunWhenKey</param-name>
             <param-value>RUNTIME_ENVIRONMENT</param-value>

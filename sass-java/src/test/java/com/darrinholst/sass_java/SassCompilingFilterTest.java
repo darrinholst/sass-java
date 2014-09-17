@@ -1,4 +1,4 @@
-package com.darrinholst;
+package com.darrinholst.sass_java;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.darrinholst.SassCompilingFilter.*;
+import static com.darrinholst.sass_java.SassCompilingFilter.*;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.*;
 import static org.mockito.Matchers.eq;
@@ -46,9 +46,9 @@ public class SassCompilingFilterTest {
     FilterConfig filterConfig;
     @Mock
     FilterChain filterChain;
+
     private String webAppRoot;
     private FakeClock clock;
-
     private SassCompilingFilter filter;
 
     @Before
@@ -69,7 +69,7 @@ public class SassCompilingFilterTest {
 
     @Test
     public void initShouldCompileFiles() throws ServletException {
-        Compiler compiler = mock(Compiler.class);
+        com.darrinholst.sass_java.Compiler compiler = mock(Compiler.class);
 
         filter.setCompiler(compiler);
 
