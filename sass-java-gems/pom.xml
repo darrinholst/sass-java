@@ -48,7 +48,9 @@
                                 <argument>gem</argument>
                                 <argument>install</argument>
                                 <argument>-i</argument>
-                                <argument>${project.build.directory}/bundler</argument>
+                                <argument>${project.build.directory}/jruby</argument>
+                                <argument>--no-rdoc</argument>
+                                <argument>--no-ri</argument>
                                 <argument>bundler</argument>
                             </arguments>
                         </configuration>
@@ -60,13 +62,17 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <environmentVariables>
+                                <GEM_HOME>${project.build.directory}/jruby</GEM_HOME>
+                                <GEM_PATH>${project.build.directory}/jruby</GEM_PATH>
+                            </environmentVariables>
                             <executable>java</executable>
                             <arguments>
                                 <argument>-classpath</argument>
                                 <classpath><dependency>org.jruby:jruby-complete</dependency></classpath>
                                 <argument>org.jruby.Main</argument>
                                 <argument>-S</argument>
-                                <argument>${project.build.directory}/bundler/bin/bundle</argument>
+                                <argument>${project.build.directory}/jruby/bin/bundle</argument>
                                 <argument>install</argument>
                                 <argument>--gemfile</argument>
                                 <argument>${basedir}/Gemfile</argument>
