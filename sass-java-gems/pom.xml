@@ -60,6 +60,9 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <environmentVariables>
+                                <GEM_HOME>${project.build.directory}/bundler</GEM_HOME>
+                            </environmentVariables>
                             <executable>java</executable>
                             <arguments>
                                 <argument>-classpath</argument>
