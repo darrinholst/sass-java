@@ -52,7 +52,7 @@ A common practice is to turn sass generation off in production and precompile in
 ```xml
 <filter>
     <filter-name>SassCompiler</filter-name>
-    <filter-class>com.sass_lang.SassCompilingFilter</filter-class>
+    <filter-class>com.darrinholst.sass_java.SassCompilingFilter</filter-class>
     <init-param>
         <param-name>onlyRunWhenKey</param-name>
         <param-value>RUNTIME_ENVIRONMENT</param-value>
