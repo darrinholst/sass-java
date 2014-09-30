@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.darrinholst</groupId>
             <artifactId>sass-java</artifactId>
-            <version>3.4.4.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
