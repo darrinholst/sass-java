@@ -86,6 +86,23 @@
                     </systemProperties>
                 </configuration>
             </plugin>
+            <!--
+            <plugin>
+                <groupId>com.darrinholst</groupId>
+                <artifactId>sass-java-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <config>${project.basedir}/src/test/webapp/WEB-INF/sass/config.rb</config>
+                        </configuration>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
         </plugins>
     </build>
 </project>
