@@ -74,6 +74,11 @@ Use the [maven plugin](https://github.com/darrinholst/sass-java/blob/master/sass
 ##Development
 The magic behind how this works comes from packaging up the sass gems into a jar that the filter can then use via jruby. The process to jar up the gems is described [here](http://blog.nicksieger.com/articles/2009/01/10/jruby-1-1-6-gems-in-a-jar/). That process is mavenized [here](https://github.com/darrinholst/sass-java/blob/master/sass-java-gems/pom.xml#L34). So to change sass or compass versions All Ya Gotta Do™ is update the [Gemfile](https://github.com/darrinholst/sass-java/blob/master/sass-java-gems/Gemfile) and `mvn clean install`.
 
+##Releasing
+First time? [Read this](http://central.sonatype.org/pages/working-with-pgp-signatures.html)  
+`mvn release:prepare release:peform`  
+That worked? [Read this](http://central.sonatype.org/pages/releasing-the-deployment.html)  
+
 ##Try it out
 1. git clone https://github.com/darrinholst/sass-java.git
 2. cd sass-java
