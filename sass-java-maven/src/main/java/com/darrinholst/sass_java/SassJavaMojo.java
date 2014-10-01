@@ -5,11 +5,14 @@ import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(
-	name = "compile"
+	name = "compile",
+	defaultPhase = LifecyclePhase.COMPILE,
+	requiresDirectInvocation = false
 )
 public class SassJavaMojo extends AbstractMojo {
 
@@ -32,7 +35,6 @@ public class SassJavaMojo extends AbstractMojo {
 
 		if (config.exists()) {
 	        compiler.setConfigLocation( config );
-	
 	        compiler.compile();
 		} else {
 			throw new MojoExecutionException( "Configuration does not exist at " + config.getAbsolutePath() );
