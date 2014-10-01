@@ -69,8 +69,7 @@ With this configuration the filter will check a system property or environment v
 See the [compass config documentation](http://compass-style.org/help/tutorials/configuration-reference/) to find out about all the wonderful things you can put in `config.rb`. For those config options that reference a file or directory, the working directory that compass will be executed in is the directory that contains `config.rb`.
 
 ##Precompiling
-
-_Coming Soon!_ See [this issue](https://github.com/darrinholst/sass-java/issues/5#issuecomment-20601451) for now. That was using an older version of sass so you're  mileage may vary. Pull requests welcome!
+Use the [maven plugin](https://github.com/darrinholst/sass-java/blob/master/sass-java-maven/README.md)
 
 ##Development
 The magic behind how this works comes from packaging up the sass gems into a jar that the filter can then use via jruby. The process to jar up the gems is described [here](http://blog.nicksieger.com/articles/2009/01/10/jruby-1-1-6-gems-in-a-jar/). That process is mavenized [here](https://github.com/darrinholst/sass-java/blob/master/sass-java-gems/pom.xml#L34). So to change sass or compass versions All Ya Gotta Do™ is update the [Gemfile](https://github.com/darrinholst/sass-java/blob/master/sass-java-gems/Gemfile) and `mvn clean install`.
