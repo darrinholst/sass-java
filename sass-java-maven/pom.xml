@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.darrinholst</groupId>
         <artifactId>sass-java-parent</artifactId>
-        <version>3.4.4.2</version>
+        <version>3.4.4.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>sass-java-maven-plugin</artifactId>
-    <version>3.4.4.2</version>
+    <version>3.4.4.3-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <dependencies>
