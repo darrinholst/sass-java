@@ -66,7 +66,7 @@ A common practice is to turn sass generation off in production and precompile in
 
 With this configuration the filter will check a system property or environment variable called RUNTIME_ENVIRONMENT and only run the sass compilation if that value is equal to local
 
-See the [compass config documentation](http://compass-style.org/help/tutorials/configuration-reference/) to find out about all the wonderful things you can put in `config.rb`. For those config options that reference a file or directory, the working directory that compass will be executed in is the directory that contains `config.rb`.
+See the [compass config documentation](http://compass-style.org/help/documentation/configuration-reference/) to find out about all the wonderful things you can put in `config.rb`. For those config options that reference a file or directory, the working directory that compass will be executed in is the directory that contains `config.rb`.
 
 ##Precompiling
 Use the [maven plugin](https://github.com/darrinholst/sass-java/blob/master/sass-java-maven/README.md)

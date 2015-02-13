@@ -330,6 +330,7 @@ public class SassCompilingFilterTest {
                 "css_dir = '../../" + CSS_LOCATION + "'\n" +
                 "sass_dir = '.'\n" +
                 "line_comments = false\n" +
+                "sourcemap = true\n" +
                 "output_style = :compressed\n").getBytes());
         output.close();
     }

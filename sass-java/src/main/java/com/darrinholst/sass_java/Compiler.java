@@ -27,7 +27,10 @@ public class Compiler {
         PrintWriter script = new PrintWriter(raw);
 
         script.println("Dir.chdir(File.dirname('" + getConfigLocation() + "')) do ");
-        script.println("  Compass.compiler.run                                    ");
+        script.println("  compiler = Compass.sass_compiler                        ");
+        script.println("  compiler.logger = Compass::NullLogger.new               ");
+        script.println("  compiler.clean!                                         ");
+        script.println("  compiler.compile!                                       ");
         script.println("end                                                       ");
         script.flush();
 
@@ -38,9 +41,10 @@ public class Compiler {
         StringWriter raw = new StringWriter();
         PrintWriter script = new PrintWriter(raw);
 
-        script.println("require 'compass'                                                          ");
-        script.println("Compass.add_project_configuration '" + getConfigLocation() + "'            ");
-        script.println("Compass.configure_sass_plugin!                                             ");
+        script.println("require 'compass'                                               ");
+        script.println("require 'compass/sass_compiler'                                 ");
+        script.println("Compass.add_project_configuration '" + getConfigLocation() + "' ");
+        script.println("Compass.configure_sass_plugin!                                  ");
         script.flush();
 
         return raw.toString();
