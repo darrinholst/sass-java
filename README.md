@@ -76,7 +76,7 @@ The magic behind how this works comes from packaging up the sass gems into a jar
 
 ##Releasing
 First time? [Read this](http://central.sonatype.org/pages/working-with-pgp-signatures.html)  
-`mvn release:prepare release:peform`  
+`mvn release:prepare release:perform`  
 That worked? [Read this](http://central.sonatype.org/pages/releasing-the-deployment.html)  
 
 ##Try it out
