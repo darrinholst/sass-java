@@ -4,7 +4,7 @@
 
     <groupId>com.darrinholst</groupId>
     <artifactId>sass-java-parent</artifactId>
-    <version>3.4.4.3</version>
+    <version>3.4.4.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
