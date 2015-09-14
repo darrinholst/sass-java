@@ -9,7 +9,7 @@ Add the dependency to `pom.xml`
 <plugin>
 	<groupId>com.darrinholst</groupId>
 	<artifactId>sass-java-maven-plugin</artifactId>
-	<version>3.4.4.1</version>
+	<version>3.4.4.3</version>
 	<executions>
 		<execution>
 			<goals>
@@ -53,7 +53,7 @@ can configure this location in the `pom.xml` using the configurations element.
 <plugin>
     <groupId>com.darrinholst</groupId>
     <artifactId>sass-java-maven-plugin</artifactId>
-    <version>3.4.4.1</version>
+    <version>3.4.4.3</version>
     <executions>
         <execution>
         	<configuration>
