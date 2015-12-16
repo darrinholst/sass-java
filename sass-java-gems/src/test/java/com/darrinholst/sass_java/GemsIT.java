@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 public class GemsIT {
     @Test
     public void correctSassIsPackaged() {
-        assertEquals("3.4.4", new ScriptingContainer().runScriptlet("require 'sass';Sass.version[:number]"));
+        assertEquals("3.4.20", new ScriptingContainer().runScriptlet("require 'sass';Sass.version[:number]"));
     }
 
     @Test
