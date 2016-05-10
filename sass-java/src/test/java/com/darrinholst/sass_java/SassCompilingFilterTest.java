@@ -217,7 +217,7 @@ public class SassCompilingFilterTest {
         initAndRunFilter();
 
         assertEquals(asList("base.css", "base.css.map"), directoryListing(CSS_LOCATION));
-        String expected = "body{color:#000}\n/*# sourceMappingURL=base.css.map */";
+        String expected = "body{color:#000}" + System.getProperty("line.separator") + "/*# sourceMappingURL=base.css.map */";
         assertEquals(expected, contentsOf(fullPathOf(CSS_LOCATION), "base.css").trim());
     }
 
