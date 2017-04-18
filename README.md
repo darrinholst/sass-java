@@ -37,10 +37,10 @@ sass_dir = "."
 Put your sass templates in `WEB-INF/sass` and each request for a css
 file will regenerate as needed.
 
-##Versioning
+## Versioning
 The first 3 nodes of the version will match the version of sass that is being used. Current versions of sass and compass can be found in the [Gemfile](https://github.com/darrinholst/sass-java/blob/master/sass-java-gems/Gemfile).
 
-##Configuring
+## Configuring
 Configuration is done through a combination of filter init parameters and the `config.rb` file. The following filter init parameters are available to control the execution of the filter:
 
 * **configLocation** - the location of the config.rb (default WEB-INF/sass/config.rb)
@@ -68,18 +68,18 @@ With this configuration the filter will check a system property or environment v
 
 See the [compass config documentation](http://compass-style.org/help/documentation/configuration-reference/) to find out about all the wonderful things you can put in `config.rb`. For those config options that reference a file or directory, the working directory that compass will be executed in is the directory that contains `config.rb`.
 
-##Precompiling
+## Precompiling
 Use the [maven plugin](https://github.com/darrinholst/sass-java/blob/master/sass-java-maven/README.md)
 
-##Development
+## Development
 The magic behind how this works comes from packaging up the sass gems into a jar that the filter can then use via jruby. The process to jar up the gems is described [here](http://blog.nicksieger.com/articles/2009/01/10/jruby-1-1-6-gems-in-a-jar/). That process is mavenized [here](https://github.com/darrinholst/sass-java/blob/master/sass-java-gems/pom.xml#L34). So to change sass or compass versions All Ya Gotta Do™ is update the [Gemfile](https://github.com/darrinholst/sass-java/blob/master/sass-java-gems/Gemfile) and `mvn clean install`.
 
-##Releasing
+## Releasing
 First time? [Read this](http://central.sonatype.org/pages/working-with-pgp-signatures.html)  
 `mvn release:prepare release:perform`  
 That worked? [Read this](http://central.sonatype.org/pages/releasing-the-deployment.html)  
 
-##Try it out
+## Try it out
 1. git clone https://github.com/darrinholst/sass-java.git
 2. cd sass-java
 3. mvn install
